@@ -36,6 +36,7 @@ services:
         environment:
             - 'GF_SECURITY_ADMIN_PASSWORD=Grafana4PC!'
             - 'GF_SERVER_ROOT_URL=http://%(domain)s/grafana/'
+            - 'GF_AUTH_ANONYMOUS_ENABLED=true'
         volumes:
             - '/home/$cfn_cluster_user/__MONITORING_DIR__/grafana:/etc/grafana/provisioning'
             - 'grafana-data:/var/lib/grafana'

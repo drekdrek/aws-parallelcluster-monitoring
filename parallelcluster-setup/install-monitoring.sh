@@ -9,7 +9,11 @@
 #source the AWS ParallelCluster profile
 . /etc/parallelcluster/cfnconfig
 
-yum -y install docker
+
+sudo dnf check-update
+sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo dnf -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
 service docker start
 chkconfig docker on
 usermod -a -G docker $cfn_cluster_user

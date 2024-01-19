@@ -79,8 +79,11 @@ case "${cfn_node_type}" in
 		nginx_dir="${monitoring_home}/nginx"
 		nginx_ssl_dir="${nginx_dir}/ssl"
 		mkdir -p ${nginx_ssl_dir}
-		echo -e "\nDNS.1=$(ec2-metadata -p | awk '{print $2}')" >> "${nginx_dir}/openssl.cnf"
-		openssl req -new -x509 -nodes -newkey rsa:4096 -days 3650 -keyout "${nginx_ssl_dir}/nginx.key" -out "${nginx_ssl_dir}/nginx.crt" -config "${nginx_dir}/openssl.cnf"
+  		CERT_ARN="$(aws acm list-certificates --region "$cfn_region" --query "CertificateSummaryList[0].CertificateArn" --output text)"
+    		aws acm get-certificate --certificate-arn "$CERT_ARN" --region us-east-1 --query "Certificate" --output text >> "${nginx_dir}/nginx.key"
+      		aws acm get-certificate --certificate-arn "$CERT_ARN" --region us-east-1 --query "CertificateChain" --output text >> "${nginx_dir}/nginx.crt"
+		# echo -e "\nDNS.1=$(ec2-metadata -p | awk '{print $2}')" >> "${nginx_dir}/openssl.cnf"
+		# openssl req -new -x509 -nodes -newkey rsa:4096 -days 3650 -keyout "${nginx_ssl_dir}/nginx.key" -out "${nginx_ssl_dir}/nginx.crt" -config "${nginx_dir}/openssl.cnf"
 
 		#give $cfn_cluster_user ownership
 		chown -R $cfn_cluster_user:$cfn_cluster_user "${nginx_ssl_dir}/nginx.key"
